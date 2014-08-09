@@ -66,7 +66,8 @@ service iptables save
     iptables -A OUTPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
     iptables -A OUTPUT -p icmp -m icmp --icmp-type 11 -j ACCEPT
 
-iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -j SNAT --to-source  74.207.241.17
+iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -j SNAT --to-source  `ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk 'NR==1 { print $1}'`
+    iptables -A FORWARD -p tcp --syn -s 192.168.0.0/24 -j TCPMSS --set-mss 1356
     iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
     iptables -A INPUT -i eth0 -p tcp --dport 1723 -j ACCEPT
     iptables -A INPUT -i eth0 -p gre -j ACCEPT
